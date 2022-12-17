@@ -3,6 +3,7 @@ package ru.hogwarts.school.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.record.StudentImpl;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
@@ -11,23 +12,23 @@ import java.util.List;
 @RestController
 @RequestMapping("student")
 public class StudentController {
-    private StudentService studentService;
+    private final StudentService studentService;
 
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
 
-    @PostMapping("add")
-    public ResponseEntity<Student> addStudent(@RequestParam String name, @RequestParam int age) {
-        Student addedStudent = studentService.createStudent(name, age);
+    @PostMapping()
+    public ResponseEntity<Student> addStudent(@RequestBody StudentImpl student) {
+        Student addedStudent = studentService.createStudent(student);
         if (addedStudent != null) {
             return ResponseEntity.ok(addedStudent);
         }
         return ResponseEntity.badRequest().build();
     }
 
-    @GetMapping("get")
-    public ResponseEntity<Student> getStudent(@RequestParam long id) {
+    @GetMapping("{id}")
+    public ResponseEntity<Student> getStudent(@PathVariable(value = "id") long id) {
         Student student = studentService.getStudent(id);
         if (student != null) {
             return ResponseEntity.ok(student);
@@ -35,8 +36,8 @@ public class StudentController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("get/by/age")
-    public ResponseEntity<List<Student>> getByAge(@RequestParam int age) {
+    @GetMapping("age/{age}")
+    public ResponseEntity<List<Student>> getByAge(@PathVariable(value = "age") int age) {
         List<Student> studentList = studentService.getStudentsByAge(age);
         if (!studentList.isEmpty()) {
             return ResponseEntity.ok(studentList);
@@ -44,7 +45,7 @@ public class StudentController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("get/all")
+    @GetMapping("all")
     public ResponseEntity<Collection<Student>> getAllStudents() {
         Collection<Student> studentCollection = studentService.getAllStudents();
         if (!studentCollection.isEmpty()) {
@@ -62,12 +63,9 @@ public class StudentController {
         return ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("delete")
-    public ResponseEntity<Student> deleteStudent(@RequestParam long id) {
-        Student deletedStudent = studentService.removeStudent(id);
-        if (deletedStudent != null) {
-            return ResponseEntity.ok(deletedStudent);
-        }
-        return ResponseEntity.notFound().build();
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity deleteStudent(@PathVariable(value = "id") long id) {
+        studentService.removeStudent(id);
+        return ResponseEntity.ok().build();
     }
 }

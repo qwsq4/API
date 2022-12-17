@@ -2,6 +2,8 @@ package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.record.FacultyImpl;
+import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,57 +13,47 @@ import java.util.stream.Collectors;
 
 @Service
 public class FacultyService {
-    private Map<Long, Faculty> storage;
-    private long idCount = 0;
-
-    public FacultyService() {
-        this.storage = new HashMap<>();
+    private final FacultyRepository facultyRepository;
+    public FacultyService(FacultyRepository facultyRepository) {
+        this.facultyRepository = facultyRepository;
     }
 
-    public Faculty createFaculty(String name, String color) {
-        Faculty faculty = new Faculty(name, color);
-        faculty.setId(idCount);
-        idCount++;
-
-        if (storage.containsKey(faculty.getId())) {
-            return null;
-        }
-
-        storage.put(faculty.getId(), faculty);
+    public Faculty createFaculty(FacultyImpl facultyImpl) {
+        Faculty faculty = new Faculty();
+        faculty.setName(facultyImpl.getName());
+        faculty.setColor(facultyImpl.getColor());
+        facultyRepository.save(faculty);
         return faculty;
     }
 
     public Faculty getFaculty(long id) {
-        if (storage.containsKey(id)) {
-            return storage.get(id);
+        if (facultyRepository.existsById(id)) {
+            return facultyRepository.findById(id).get();
         }
         return null;
     }
 
     public List<Faculty> getFacultiesByColor(String color) {
-        return storage.values()
+        return facultyRepository
+                .findAll()
                 .stream()
                 .filter(e -> e.getColor() == color)
                 .collect(Collectors.toList());
     }
 
     public Collection<Faculty> getAllFaculties() {
-        return storage.values();
+        return facultyRepository.findAll();
     }
 
     public Faculty updateFaculty(Faculty faculty) {
-        if (storage.containsKey(faculty.getId())) {
-            storage.put(faculty.getId(), faculty);
+        if (facultyRepository.existsById(faculty.getId())) {
+            facultyRepository.save(faculty);
             return faculty;
         }
         return null;
     }
 
-    public Faculty removeFaculty(long id) {
-        if (storage.containsKey(id)) {
-            storage.remove(id);
-            return storage.get(id);
-        }
-        return null;
+    public void removeFaculty(long id) {
+        facultyRepository.deleteById(id);
     }
 }
