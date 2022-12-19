@@ -3,11 +3,11 @@ package ru.hogwarts.school.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.record.FacultyImpl;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.Collection;
-import java.util.List;
 
 @RestController
 @RequestMapping("faculty")
@@ -19,8 +19,8 @@ public class FacultyController {
     }
 
     @PostMapping()
-    public ResponseEntity<Faculty> addFaculty(@RequestBody FacultyImpl facultyImpl) {
-        Faculty addedFaculty = facultyService.createFaculty(facultyImpl);
+    public ResponseEntity<String> addFaculty(@RequestBody FacultyImpl facultyImpl) {
+        String addedFaculty = facultyService.createFaculty(facultyImpl);
         if (addedFaculty != null) {
             return ResponseEntity.ok(addedFaculty);
         }
@@ -28,26 +28,41 @@ public class FacultyController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Faculty> getFaculty(@PathVariable(value = "id") long id) {
-        Faculty faculty = facultyService.getFaculty(id);
+    public ResponseEntity<String> getFaculty(@PathVariable(value = "id") long id) {
+        String faculty = facultyService.getFaculty(id);
         if (faculty != null) {
             return ResponseEntity.ok(faculty);
         }
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("color/{color}")
-    public ResponseEntity<List<Faculty>> getByColor(@PathVariable(value = "color") String color) {
-        List<Faculty> facultyCollection = facultyService.getFacultiesByColor(color);
-        if (!facultyCollection.isEmpty()) {
-            return ResponseEntity.ok(facultyCollection);
+    @GetMapping("{id}/students")
+    public ResponseEntity<String> getFacultyStudents(@PathVariable(value = "id") long id) {
+        String studentCollection = facultyService.getFacultyStudents(id);
+        if (studentCollection != null) {
+            return ResponseEntity.ok(studentCollection);
         }
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("color")
+    public ResponseEntity<String> getByColorOrName(@RequestParam(required = false) String color,
+                                                                @RequestParam(required = false) String name) {
+        if (color != null && !color.isBlank()) {
+            String facultyCollection = facultyService.getFacultyByColor(color);
+            return ResponseEntity.ok(facultyCollection);
+        }
+        if (name != null && !name.isBlank()) {
+            String facultyCollection = facultyService.getFacultyByName(name);
+            return ResponseEntity.ok(facultyCollection);
+        }
+        String facultyCollection = facultyService.getAllFaculties();
+        return ResponseEntity.ok(facultyCollection);
+    }
+
     @GetMapping("all")
-    public ResponseEntity<Collection<Faculty>> getAllFaculties() {
-        Collection<Faculty> facultyCollection = facultyService.getAllFaculties();
+    public ResponseEntity<String> getAllFaculties() {
+        String facultyCollection = facultyService.getAllFaculties();
         if (!facultyCollection.isEmpty()) {
             return ResponseEntity.ok(facultyCollection);
         }
@@ -55,8 +70,8 @@ public class FacultyController {
     }
 
     @PutMapping("update")
-    public ResponseEntity<Faculty> updateFaculty(@RequestBody Faculty faculty) {
-        Faculty updatedFaculty = facultyService.updateFaculty(faculty);
+    public ResponseEntity<String> updateFaculty(@RequestBody Faculty faculty) {
+        String updatedFaculty = facultyService.updateFaculty(faculty);
         if (updatedFaculty != null) {
             return ResponseEntity.ok(updatedFaculty);
         }

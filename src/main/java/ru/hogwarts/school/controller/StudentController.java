@@ -19,8 +19,8 @@ public class StudentController {
     }
 
     @PostMapping()
-    public ResponseEntity<Student> addStudent(@RequestBody StudentImpl student) {
-        Student addedStudent = studentService.createStudent(student);
+    public ResponseEntity<String> addStudent(@RequestBody StudentImpl student) {
+        String addedStudent = studentService.createStudent(student);
         if (addedStudent != null) {
             return ResponseEntity.ok(addedStudent);
         }
@@ -28,17 +28,26 @@ public class StudentController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Student> getStudent(@PathVariable(value = "id") long id) {
-        Student student = studentService.getStudent(id);
+    public ResponseEntity<String> getStudent(@PathVariable(value = "id") long id) {
+        String student = studentService.getStudent(id);
         if (student != null) {
             return ResponseEntity.ok(student);
         }
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("{id}/faculty")
+    public ResponseEntity<String> getStudentFaculty(@PathVariable(value = "id") long id) {
+        String faculty = studentService.getStudentFaculty(id);
+        if (faculty != null) {
+            return ResponseEntity.ok(faculty);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @GetMapping("age/{age}")
-    public ResponseEntity<List<Student>> getByAge(@PathVariable(value = "age") int age) {
-        List<Student> studentList = studentService.getStudentsByAge(age);
+    public ResponseEntity<String> getByAge(@PathVariable(value = "age") int age) {
+        String studentList = studentService.getStudentsByAge(age);
         if (!studentList.isEmpty()) {
             return ResponseEntity.ok(studentList);
         }
@@ -46,8 +55,8 @@ public class StudentController {
     }
 
     @GetMapping("all")
-    public ResponseEntity<Collection<Student>> getAllStudents() {
-        Collection<Student> studentCollection = studentService.getAllStudents();
+    public ResponseEntity<String> getAllStudents() {
+        String studentCollection = studentService.getAllStudents();
         if (!studentCollection.isEmpty()) {
             return ResponseEntity.ok(studentCollection);
         }
@@ -55,8 +64,8 @@ public class StudentController {
     }
 
     @PutMapping("update")
-    public ResponseEntity<Student> updateStudent(@RequestBody Student student) {
-        Student updatedStudent = studentService.updateStudent(student);
+    public ResponseEntity<String> updateStudent(@RequestBody Student student) {
+        String updatedStudent = studentService.updateStudent(student);
         if (updatedStudent != null) {
             return ResponseEntity.ok(updatedStudent);
         }

@@ -1,53 +1,64 @@
 package ru.hogwarts.school.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.record.StudentImpl;
+import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
+    private final FacultyRepository facultyRepository;
     private final StudentRepository studentRepository;
 
-    public StudentService(StudentRepository studentRepository) {
+    public StudentService(StudentRepository studentRepository, FacultyRepository facultyRepository) {
         this.studentRepository = studentRepository;
+        this.facultyRepository = facultyRepository;
     }
 
-    public Student createStudent(StudentImpl studentImpl) {
-        Student student = new Student();
-        student.setName(studentImpl.getName());
-        student.setAge(studentImpl.getAge());
-        studentRepository.save(student);
-        return student;
-    }
-
-    public Student getStudent(long id) {
-        if (studentRepository.existsById(id)) {
-            return studentRepository.findById(id).get();
+    public String createStudent(StudentImpl studentImpl) {
+        if (facultyRepository.existsById(studentImpl.getFacultyId())) {
+            Student student = new Student(studentImpl.getName(),
+                    studentImpl.getAge(),
+                    facultyRepository.findById(studentImpl.getFacultyId()).get());
+            studentRepository.save(student);
+            return student.toString();
         }
         return null;
     }
 
-    public Collection<Student> getAllStudents() {
-        return studentRepository.findAll();
+    public String getStudent(long id) {
+        if (studentRepository.existsById(id)) {
+            return studentRepository.findById(id).get().toString();
+        }
+        return null;
     }
 
-    public List<Student> getStudentsByAge(int age) {
-            return studentRepository
-                    .findAll()
-                    .stream()
-                    .filter(e -> e.getAge() >= age)
-                    .collect(Collectors.toList());
+    public String getStudentFaculty(long id) {
+        if (studentRepository.existsById(id)) {
+            return studentRepository.findById(id).get().getFaculty().toString();
+        }
+        return null;
     }
 
-    public Student updateStudent(Student student) {
+    public String getAllStudents() {
+        return studentRepository.findAll().toString();
+    }
+
+    public String getStudentsByAge(int min, int max) {
+        return studentRepository.findAllByAgeIsBetween(min, max).toString();
+    }
+
+    public String getStudentsByAge(int age) {
+        return studentRepository.findAllByAgeAfter(age).toString();
+    }
+
+    public String updateStudent(Student student) {
         if (studentRepository.existsById(student.getId())) {
             studentRepository.save(student);
-            return student;
+            return student.toString();
         }
         return null;
     }

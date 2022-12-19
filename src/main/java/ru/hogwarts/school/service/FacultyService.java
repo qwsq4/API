@@ -6,10 +6,6 @@ import ru.hogwarts.school.record.FacultyImpl;
 import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class FacultyService {
@@ -18,37 +14,44 @@ public class FacultyService {
         this.facultyRepository = facultyRepository;
     }
 
-    public Faculty createFaculty(FacultyImpl facultyImpl) {
+    public String createFaculty(FacultyImpl facultyImpl) {
         Faculty faculty = new Faculty();
         faculty.setName(facultyImpl.getName());
         faculty.setColor(facultyImpl.getColor());
         facultyRepository.save(faculty);
-        return faculty;
+        return faculty.toString();
     }
 
-    public Faculty getFaculty(long id) {
+    public String getFaculty(long id) {
         if (facultyRepository.existsById(id)) {
-            return facultyRepository.findById(id).get();
+            return facultyRepository.findById(id).get().toString();
         }
         return null;
     }
 
-    public List<Faculty> getFacultiesByColor(String color) {
-        return facultyRepository
-                .findAll()
-                .stream()
-                .filter(e -> e.getColor() == color)
-                .collect(Collectors.toList());
+    public String getFacultyStudents(long id) {
+        if (facultyRepository.existsById(id)) {
+            return facultyRepository.findById(id).get().getStudentCollection().toString();
+        }
+        return null;
     }
 
-    public Collection<Faculty> getAllFaculties() {
-        return facultyRepository.findAll();
+    public String getFacultyByColor(String color) {
+        return facultyRepository.findAllByColor(color).toString();
     }
 
-    public Faculty updateFaculty(Faculty faculty) {
+    public String getFacultyByName(String name) {
+        return facultyRepository.findAllByName(name).toString();
+    }
+
+    public String getAllFaculties() {
+        return facultyRepository.findAll().toString();
+    }
+
+    public String updateFaculty(Faculty faculty) {
         if (facultyRepository.existsById(faculty.getId())) {
             facultyRepository.save(faculty);
-            return faculty;
+            return faculty.toString();
         }
         return null;
     }
