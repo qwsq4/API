@@ -2,9 +2,12 @@ package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.record.FacultyImpl;
+import ru.hogwarts.school.record.StudentImpl;
 import ru.hogwarts.school.repository.FacultyRepository;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Service
@@ -14,49 +17,82 @@ public class FacultyService {
         this.facultyRepository = facultyRepository;
     }
 
-    public String createFaculty(FacultyImpl facultyImpl) {
+    public FacultyImpl createFaculty(FacultyImpl facultyImpl) {
         Faculty faculty = new Faculty();
         faculty.setName(facultyImpl.getName());
         faculty.setColor(facultyImpl.getColor());
         facultyRepository.save(faculty);
-        return faculty.toString();
+        return convert(faculty);
     }
 
-    public String getFaculty(long id) {
+    public FacultyImpl getFaculty(long id) {
         if (facultyRepository.existsById(id)) {
-            return facultyRepository.findById(id).get().toString();
+            return convert(facultyRepository.findById(id).get());
         }
         return null;
     }
 
-    public String getFacultyStudents(long id) {
+    public Collection<StudentImpl> getFacultyStudents(long id) {
         if (facultyRepository.existsById(id)) {
-            return facultyRepository.findById(id).get().getStudentCollection().toString();
+            Collection<StudentImpl> studentCollection = new ArrayList<>();
+            facultyRepository
+                    .findById(id)
+                    .get()
+                    .getStudentCollection()
+                    .stream()
+                    .forEach(e -> studentCollection.add(convertStudent(e)));
+            return studentCollection;
         }
         return null;
     }
 
-    public String getFacultyByColor(String color) {
-        return facultyRepository.findAllByColor(color).toString();
+    public Collection<FacultyImpl> getFacultyByColor(String color) {
+        Collection<FacultyImpl> facultyCollection = new ArrayList<>();
+        facultyRepository
+                .findAllByColor(color)
+                .stream()
+                .forEach(e -> facultyCollection.add(convert(e)));
+        return facultyCollection;
     }
 
-    public String getFacultyByName(String name) {
-        return facultyRepository.findAllByName(name).toString();
+    public Collection<FacultyImpl> getFacultyByName(String name) {
+        Collection<FacultyImpl> facultyCollection = new ArrayList<>();
+        facultyRepository
+                .findAllByName(name)
+                .stream()
+                .forEach(e -> facultyCollection.add(convert(e)));
+        return facultyCollection;
     }
 
-    public String getAllFaculties() {
-        return facultyRepository.findAll().toString();
+    public Collection<FacultyImpl> getAllFaculties() {
+        Collection<FacultyImpl> facultyCollection = new ArrayList<>();
+        facultyRepository
+                .findAll()
+                .stream()
+                .forEach(e -> facultyCollection.add(convert(e)));
+        return facultyCollection;
     }
 
-    public String updateFaculty(Faculty faculty) {
+    public FacultyImpl updateFaculty(Faculty faculty) {
         if (facultyRepository.existsById(faculty.getId())) {
             facultyRepository.save(faculty);
-            return faculty.toString();
+            return convert(faculty);
         }
         return null;
     }
 
     public void removeFaculty(long id) {
         facultyRepository.deleteById(id);
+    }
+
+    private FacultyImpl convert(Faculty e) {
+        return new FacultyImpl(e.getName(),
+                e.getColor());
+    }
+
+    private StudentImpl convertStudent(Student e) {
+        return new StudentImpl(e.getName(),
+                e.getAge(),
+                e.getFaculty().getName());
     }
 }

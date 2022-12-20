@@ -1,15 +1,15 @@
 package ru.hogwarts.school.record;
 
 public class StudentImpl {
-    private final String name;
-    private final int age;
+    private String name;
+    private int age;
 
-    private final long facultyId;
+    private String facultyName;
 
-    public StudentImpl(String name, int age, int facultyId) {
+    public StudentImpl(String name, int age, String facultyName) {
         this.name = name;
         this.age = age;
-        this.facultyId = facultyId;
+        this.facultyName = facultyName;
     }
 
     public String getName() {
@@ -20,7 +20,7 @@ public class StudentImpl {
         return age;
     }
 
-    public long getFacultyId() {
-        return facultyId;
+    public String getFacultyName() {
+        return facultyName;
     }
 }

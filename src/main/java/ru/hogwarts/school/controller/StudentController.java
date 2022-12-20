@@ -7,7 +7,6 @@ import ru.hogwarts.school.record.StudentImpl;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
-import java.util.List;
 
 @RestController
 @RequestMapping("student")
@@ -19,8 +18,8 @@ public class StudentController {
     }
 
     @PostMapping()
-    public ResponseEntity<String> addStudent(@RequestBody StudentImpl student) {
-        String addedStudent = studentService.createStudent(student);
+    public ResponseEntity<StudentImpl> addStudent(@RequestBody StudentImpl student) {
+        StudentImpl addedStudent = studentService.createStudent(student);
         if (addedStudent != null) {
             return ResponseEntity.ok(addedStudent);
         }
@@ -28,8 +27,8 @@ public class StudentController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<String> getStudent(@PathVariable(value = "id") long id) {
-        String student = studentService.getStudent(id);
+    public ResponseEntity<StudentImpl> getStudent(@PathVariable(value = "id") long id) {
+        StudentImpl student = studentService.getStudent(id);
         if (student != null) {
             return ResponseEntity.ok(student);
         }
@@ -46,8 +45,8 @@ public class StudentController {
     }
 
     @GetMapping("age/{age}")
-    public ResponseEntity<String> getByAge(@PathVariable(value = "age") int age) {
-        String studentList = studentService.getStudentsByAge(age);
+    public ResponseEntity<Collection<StudentImpl>> getByAge(@PathVariable(value = "age") int age) {
+        Collection<StudentImpl> studentList = studentService.getStudentsByAge(age);
         if (!studentList.isEmpty()) {
             return ResponseEntity.ok(studentList);
         }
@@ -55,8 +54,8 @@ public class StudentController {
     }
 
     @GetMapping("all")
-    public ResponseEntity<String> getAllStudents() {
-        String studentCollection = studentService.getAllStudents();
+    public ResponseEntity<Collection<StudentImpl>> getAllStudents() {
+        Collection<StudentImpl> studentCollection = studentService.getAllStudents();
         if (!studentCollection.isEmpty()) {
             return ResponseEntity.ok(studentCollection);
         }
@@ -64,8 +63,8 @@ public class StudentController {
     }
 
     @PutMapping("update")
-    public ResponseEntity<String> updateStudent(@RequestBody Student student) {
-        String updatedStudent = studentService.updateStudent(student);
+    public ResponseEntity<StudentImpl> updateStudent(@RequestBody Student student) {
+        StudentImpl updatedStudent = studentService.updateStudent(student);
         if (updatedStudent != null) {
             return ResponseEntity.ok(updatedStudent);
         }
