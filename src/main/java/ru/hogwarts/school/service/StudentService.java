@@ -1,5 +1,6 @@
 package ru.hogwarts.school.service;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.record.StudentImpl;
@@ -28,6 +29,23 @@ public class StudentService {
             return convert(student);
         }
         return null;
+    }
+
+    public int getStudentsAmount() {
+        return studentRepository.getStudentsAmount();
+    }
+
+    public int getStudentsAgeAvg() {
+        return studentRepository.getStudentsAgeAvg();
+    }
+
+    public Collection<StudentImpl> getFiveLastStudents() {
+        Collection<StudentImpl> studentCollection = new ArrayList<>();
+        studentRepository
+                .getFiveLastStudents()
+                .stream()
+                .forEach(e -> studentCollection.add(convert(e)));
+        return studentCollection;
     }
 
     public StudentImpl getStudent(long id) {

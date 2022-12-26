@@ -35,6 +35,33 @@ public class StudentController {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/amount")
+    public ResponseEntity<Integer> getStudentsAmount() {
+        int amount = studentService.getStudentsAmount();
+        if (amount > 0) {
+            return ResponseEntity.ok(amount);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/age/average")
+    public ResponseEntity<Integer> getStudentsAgeAvg() {
+        int ageSum = studentService.getStudentsAgeAvg();
+        if (ageSum > 0) {
+            return ResponseEntity.ok(ageSum);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/last")
+    public ResponseEntity<Collection<StudentImpl>> getFiveLastStudents() {
+        Collection<StudentImpl> studentCollection = studentService.getFiveLastStudents();
+        if (!studentCollection.isEmpty()) {
+            return ResponseEntity.ok(studentCollection);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @GetMapping("{id}/faculty")
     public ResponseEntity<String> getStudentFaculty(@PathVariable(value = "id") long id) {
         String faculty = studentService.getStudentFaculty(id);
