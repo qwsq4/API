@@ -1,6 +1,7 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.model.Avatar;
@@ -12,7 +13,7 @@ import javax.transaction.Transactional;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
+import java.util.*;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -58,5 +59,15 @@ public class AvatarService {
 
     private String getExtensions(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
+
+    public Map<Student, String> getAllAvatars(Integer page) {
+        PageRequest pageRequest = PageRequest.of(page - 1, 4);
+        Map<Student, String> map = new HashMap<>();
+        avatarRepository
+                .findAll(pageRequest)
+                .stream()
+                .forEach(e -> map.put(e.getStudent(), e.getFilePath()));
+        return map;
     }
 }
