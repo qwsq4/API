@@ -1,2 +1,2 @@
-SELECT student.name, student.age, faculty.name FROM student INNER JOIN faculty ON student.faculty_id = faculty.id;
-SELECT s.id, s.name, s.age, s.faculty_id from avatar INNER JOIN student s on s.id = avatar.studwent_id;
+SELECT s.name, s.age, faculty.name FROM student s INNER JOIN faculty ON s.faculty_id = faculty.id;
+SELECT s.id, s.name, s.age, s.faculty_id from avatar INNER JOIN student s on s.id = avatar.student_id;
