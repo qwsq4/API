@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
@@ -17,7 +19,10 @@ public class FacultyService {
         this.facultyRepository = facultyRepository;
     }
 
+    Logger logger = LoggerFactory.getLogger(FacultyService.class);
+
     public FacultyImpl createFaculty(FacultyImpl facultyImpl) {
+        logger.debug("create faculty method called");
         Faculty faculty = new Faculty();
         faculty.setName(facultyImpl.getName());
         faculty.setColor(facultyImpl.getColor());
@@ -26,6 +31,7 @@ public class FacultyService {
     }
 
     public FacultyImpl getFaculty(long id) {
+        logger.debug("get faculty method called");
         if (facultyRepository.existsById(id)) {
             return convert(facultyRepository.findById(id).get());
         }
@@ -33,6 +39,7 @@ public class FacultyService {
     }
 
     public Collection<StudentImpl> getFacultyStudents(long id) {
+        logger.debug("get students for faculty " + facultyRepository.findById(id).get().getName() + " method called");
         if (facultyRepository.existsById(id)) {
             Collection<StudentImpl> studentCollection = new ArrayList<>();
             facultyRepository
@@ -47,6 +54,7 @@ public class FacultyService {
     }
 
     public Collection<FacultyImpl> getFacultyByColor(String color) {
+        logger.debug("get faculty by color faculty method called");
         Collection<FacultyImpl> facultyCollection = new ArrayList<>();
         facultyRepository
                 .findAllByColor(color)
@@ -56,6 +64,7 @@ public class FacultyService {
     }
 
     public Collection<FacultyImpl> getFacultyByName(String name) {
+        logger.debug("get faculty by name method called");
         Collection<FacultyImpl> facultyCollection = new ArrayList<>();
         facultyRepository
                 .findAllByName(name)
@@ -65,6 +74,7 @@ public class FacultyService {
     }
 
     public Collection<FacultyImpl> getAllFaculties() {
+        logger.debug("get all faculties method called");
         Collection<FacultyImpl> facultyCollection = new ArrayList<>();
         facultyRepository
                 .findAll()
@@ -74,6 +84,7 @@ public class FacultyService {
     }
 
     public FacultyImpl updateFaculty(Faculty faculty) {
+        logger.debug("update faculty method called");
         if (facultyRepository.existsById(faculty.getId())) {
             facultyRepository.save(faculty);
             return convert(faculty);
@@ -82,6 +93,7 @@ public class FacultyService {
     }
 
     public void removeFaculty(long id) {
+        logger.debug("remove faculty method called");
         facultyRepository.deleteById(id);
     }
 
