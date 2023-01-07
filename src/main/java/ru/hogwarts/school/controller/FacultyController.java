@@ -60,6 +60,16 @@ public class FacultyController {
         return ResponseEntity.ok(facultyCollection);
     }
 
+    @GetMapping("longestName")
+    public ResponseEntity<String> getLongestName() {
+        String longestName = facultyService.getLongestFacultyName();
+
+        if (!longestName.isBlank() && !longestName.isEmpty()) {
+            return ResponseEntity.ok(longestName);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @GetMapping("all")
     public ResponseEntity<Collection<FacultyImpl>> getAllFaculties() {
         Collection<FacultyImpl> facultyCollection = facultyService.getAllFaculties();

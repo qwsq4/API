@@ -7,6 +7,7 @@ import ru.hogwarts.school.record.StudentImpl;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("student")
@@ -85,6 +86,24 @@ public class StudentController {
         Collection<StudentImpl> studentCollection = studentService.getAllStudents();
         if (!studentCollection.isEmpty()) {
             return ResponseEntity.ok(studentCollection);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("nameStartWithA")
+    public ResponseEntity<List<String>> getStudentNamesStartsWithA() {
+        List<String> stringList = studentService.getStudentByNameStartsWithA();
+        if (!stringList.isEmpty()) {
+            return ResponseEntity.ok(stringList);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("ageSum")
+    public ResponseEntity<Integer> getAgeSum() {
+        int ageSum = studentService.getAgeSum();
+        if (ageSum > 0) {
+            return ResponseEntity.ok(ageSum);
         }
         return ResponseEntity.notFound().build();
     }

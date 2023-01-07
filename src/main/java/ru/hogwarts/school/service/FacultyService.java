@@ -9,8 +9,9 @@ import ru.hogwarts.school.record.FacultyImpl;
 import ru.hogwarts.school.record.StudentImpl;
 import ru.hogwarts.school.repository.FacultyRepository;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 @Service
 public class FacultyService {
@@ -19,7 +20,7 @@ public class FacultyService {
         this.facultyRepository = facultyRepository;
     }
 
-    Logger logger = LoggerFactory.getLogger(FacultyService.class);
+    private final Logger logger = LoggerFactory.getLogger(FacultyService.class);
 
     public FacultyImpl createFaculty(FacultyImpl facultyImpl) {
         logger.debug("create faculty method called");
@@ -71,6 +72,16 @@ public class FacultyService {
                 .stream()
                 .forEach(e -> facultyCollection.add(convert(e)));
         return facultyCollection;
+    }
+
+    public String getLongestFacultyName() {
+        Stream<Faculty> stream = facultyRepository.findAll().stream();
+
+        String longestName = stream
+                .map(Faculty::getName)
+                .max(Comparator.comparing(String::length))
+                .get();
+        return longestName;
     }
 
     public Collection<FacultyImpl> getAllFaculties() {

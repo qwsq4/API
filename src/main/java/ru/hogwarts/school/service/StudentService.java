@@ -1,5 +1,6 @@
 package ru.hogwarts.school.service;
 
+import liquibase.repackaged.org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,12 +10,13 @@ import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 public class StudentService {
     private final FacultyRepository facultyRepository;
     private final StudentRepository studentRepository;
-    Logger logger = LoggerFactory.getLogger(StudentService.class);
+    private final Logger logger = LoggerFactory.getLogger(StudentService.class);
 
     public StudentService(StudentRepository studentRepository, FacultyRepository facultyRepository) {
         this.studentRepository = studentRepository;
@@ -24,7 +26,7 @@ public class StudentService {
     public StudentImpl createStudent(StudentImpl studentImpl) {
         logger.debug("create student method called");
         if (facultyRepository.findByName(studentImpl.getFacultyName()) != null) {
-            Student student = new Student(studentImpl.getName(),
+            Student student = new Student(WordUtils.capitalize(studentImpl.getName()),
                     studentImpl.getAge(),
                     facultyRepository.findByName(studentImpl.getFacultyName()));
             studentRepository.save(student);
@@ -62,6 +64,29 @@ public class StudentService {
             return convert(student);
         }
         return null;
+    }
+
+    public List<String> getStudentByNameStartsWithA() {
+        Stream<Student> stream = studentRepository.findAll().stream();
+
+        List<String> collection = new ArrayList<>();
+        stream
+                .parallel()
+                .filter(e -> e.getName().startsWith("A") || e.getName().startsWith("А"))
+                .forEach(e -> collection.add(e.getName().toUpperCase()));
+        Collections.sort(collection);
+        return collection;
+    }
+
+    public int getAgeSum() {
+        Stream<Student> stream = studentRepository.findAll().stream();
+
+        int ageSum = stream
+                .parallel()
+                .mapToInt(e -> e.getAge())
+                .sum();
+
+        return ageSum;
     }
 
     public String getStudentFaculty(long id) {
