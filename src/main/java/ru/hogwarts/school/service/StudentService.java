@@ -75,6 +75,39 @@ public class StudentService {
                 .collect(Collectors.toList());
     }
 
+    public void getStudentNamesByNoSyncThread() {
+        List<Student> studentList = studentRepository.findAll();
+        System.out.println(studentList.get(0).getName());
+        System.out.println(studentList.get(1).getName());
+        new Thread(() -> {
+            System.out.println(studentList.get(2).getName());
+            System.out.println(studentList.get(3).getName());
+        }).start();
+        new Thread(() -> {
+            System.out.println(studentList.get(4).getName());
+            System.out.println(studentList.get(5).getName());
+        }).start();
+    }
+
+    public void getStudentNamesBySyncThread() {
+        Object flag = new Object();
+        List<Student> studentList = studentRepository.findAll();
+        System.out.println(studentList.get(0).getName());
+        System.out.println(studentList.get(1).getName());
+        new Thread(() -> {
+            synchronized (flag) {
+                System.out.println(studentList.get(2).getName());
+                System.out.println(studentList.get(3).getName());
+            }
+        }).start();
+        new Thread(() -> {
+            synchronized (flag) {
+                System.out.println(studentList.get(4).getName());
+                System.out.println(studentList.get(5).getName());
+            }
+        }).start();
+    }
+
     public double getAgeAvg() {
         Stream<Student> stream = studentRepository.findAll().stream();
 

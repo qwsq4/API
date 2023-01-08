@@ -99,6 +99,16 @@ public class StudentController {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("no-sync-threads")
+    public void getStudentNamesByNoSyncThreads() {
+        studentService.getStudentNamesByNoSyncThread();
+    }
+
+    @GetMapping("sync-threads")
+    public void getStudentNamesBySyncThreads() {
+        studentService.getStudentNamesBySyncThread();
+    }
+
     @GetMapping("ageAvg")
     public ResponseEntity<Double> getAgeSum() {
         double ageAvg = studentService.getAgeAvg();
