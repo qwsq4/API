@@ -99,11 +99,11 @@ public class StudentController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("ageSum")
-    public ResponseEntity<Integer> getAgeSum() {
-        int ageSum = studentService.getAgeSum();
-        if (ageSum > 0) {
-            return ResponseEntity.ok(ageSum);
+    @GetMapping("ageAvg")
+    public ResponseEntity<Double> getAgeSum() {
+        double ageAvg = studentService.getAgeAvg();
+        if (ageAvg > 0) {
+            return ResponseEntity.ok(ageAvg);
         }
         return ResponseEntity.notFound().build();
     }

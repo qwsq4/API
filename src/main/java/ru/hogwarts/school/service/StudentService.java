@@ -10,6 +10,7 @@ import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -67,26 +68,22 @@ public class StudentService {
     }
 
     public List<String> getStudentByNameStartsWithA() {
-        Stream<Student> stream = studentRepository.findAll().stream();
-
-        List<String> collection = new ArrayList<>();
-        stream
-                .parallel()
-                .filter(e -> e.getName().startsWith("A") || e.getName().startsWith("А"))
-                .forEach(e -> collection.add(e.getName().toUpperCase()));
-        Collections.sort(collection);
-        return collection;
+        return studentRepository.findAll().stream()
+                .map(s -> s.getName().toUpperCase())
+                .filter(s -> s.startsWith("A"))
+                .sorted()
+                .collect(Collectors.toList());
     }
 
-    public int getAgeSum() {
+    public double getAgeAvg() {
         Stream<Student> stream = studentRepository.findAll().stream();
 
-        int ageSum = stream
+        double ageAvg = stream
                 .parallel()
                 .mapToInt(e -> e.getAge())
-                .sum();
+                .average().getAsDouble();
 
-        return ageSum;
+        return ageAvg;
     }
 
     public String getStudentFaculty(long id) {

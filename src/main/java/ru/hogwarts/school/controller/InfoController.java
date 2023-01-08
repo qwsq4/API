@@ -25,11 +25,10 @@ public class InfoController {
     @GetMapping("getIntSum")
     public String intSum() {
         Instant start = Instant.now();
-        int sum = Stream
-                .iterate(1, a -> a +1)
-                .limit(1_000_000)
-                .parallel()
-                .reduce(0, (a, b) -> a + b);
+        int sum = 0;
+        for (int i = 1; i <= 1_000_000; i++) {
+            sum = sum + i;
+        }
         Instant finish = Instant.now();
         long elapsed = Duration.between(start, finish).toMillis();
         return "result: " + sum + ", time elapsed: " + elapsed;
